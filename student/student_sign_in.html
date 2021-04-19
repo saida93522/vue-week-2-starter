@@ -4,33 +4,35 @@
 <head>
     <title>Student Sign In</title>
     <script src="https://unpkg.com/vue@next"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
+        <!--Hiding page until Vue  loads-->
 
 
         <!-- TODO show errors from form validation -->
-
-
+        <div class="alert alert-danger" v-show="errors.length > 0">
+            <li v-for="error in errors">{{ error }}</li>
+        </div>
         <div class="card add-student m-2 p-2">
             <h4 class="card-title">Add new student</h4>
 
             <div class="form-group">
                 <label for="name">Name</label>
                 <!-- TODO v-model newStudentName -->
-                <input id="name" class="form-control">
+                <input id="name" class="form-control" v-model.trim="newStudentName">
             </div>
             <div class="form-group">
                 <label for="starID">Star ID</label>
                 <!-- TODO v-model newStarID -->
-                <input id="starID" class="form-control">
+                <input id="starID" class="form-control" v-model.trim="newStarID">
             </div>
             <!-- TODO v-on:click event handler -->
-            <button class="btn btn-primary">Add</button>
+            <button class="btn btn-primary" v-on:click="addStudent">Add</button>
         </div>
 
         <div class="card student-list m-2 p-2">
@@ -43,9 +45,17 @@
                         <th>Present?</th>
                     </tr>
 
-                   <!-- TODO create table rows 
+                    <!-- TODO create table rows 
                    Each row will have a checkbox, bound to the app's data 
                    When the checkbox is checked/unchecked, the student will be signed in/out -->
+                    <tr v-for="student in students" v-bind:key="student.starID"
+                        v-bind:class="{present: student.present, absent: !student.present }">
+                        <td>{{student.name}}</td>
+                        <td>{{student.starID}}</td>
+                        <td>
+                            <input type="checkbox" v-model="student.present" v-on:change="arrivedOrLeft(student)">
+                        </td>
+                    </tr>
 
                 </table>
             </div>
@@ -53,21 +63,18 @@
 
 
         <!-- TODO show a message when student arrives or leaves  -->
+        <div v-show="mostRecentStudent.name">
+            <div v-if="mostRecentStudent.present" class="alert alert-success">
+                Welcome, {{ mostRecentStudent.name }}
+            </div>
+            <div v-else class="alert alert-danger">Goodbye, {{ mostRecentStudent.name }}. See you later!</div>
+        </div>
 
 
     </div>
 
-    <script>
-
-
-        // TODO Vue app     
-
-
-    </script>
+    <script src="app.js">// TODO Vue app</script>
 
 </body>
 
 </html>
-
-
-                
